@@ -2,7 +2,7 @@
 #include "Game.h"
 
 int main() {
-	sf::RenderWindow w(sf::VideoMode(500, 500), "Mikoshi");
+	sf::RenderWindow w(sf::VideoMode(180, 180), "Snake");
 
 	Game game(w);
 	Game* gameptr = &game;
