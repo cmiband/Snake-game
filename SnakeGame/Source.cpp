@@ -2,12 +2,13 @@
 #include "Game.h"
 
 int main() {
-	sf::RenderWindow w(sf::VideoMode(180, 180), "Snake");
+	const int screenWidth = 260;
+	const int screenHeight = 260;
+	sf::RenderWindow w(sf::VideoMode(screenWidth, screenHeight), "Snake");
+	w.setFramerateLimit(10);
 
-	Game game(w);
-	Game* gameptr = &game;
-
-	gameptr->Run();
+	Game game(&w);
+	game.Run();
 
 	return 0;
 }

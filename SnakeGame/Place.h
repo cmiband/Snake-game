@@ -25,5 +25,18 @@ public:
 	bool GetSnakeCover() {
 		return isPartOfSnake;
 	}
+
+	void SetSnakeCover(bool val) {
+		isPartOfSnake = val;
+	}
+
+	void ChangeColor() {
+		if (isPartOfSnake) {
+			shp.setFillColor(sf::Color::Red);
+		}
+		else {
+			shp.setFillColor(sf::Color::Green);
+		}
+	}
 };
 

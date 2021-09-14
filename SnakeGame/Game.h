@@ -1,26 +1,31 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 #include "Place.h"
+#include <utility>
+#include <stdio.h>
 
-enum Directions {
-	LEFT,
-	RIGHT,
-	TOP,
-	DOWN
-};
+using namespace std;
 
 class Game
 {
 private:
-	sf::RenderWindow& window;
-	Place places[10][10];
+	enum Directions {
+		LEFT,
+		RIGHT,
+		TOP,
+		DOWN
+	};
+	sf::RenderWindow *window;
+	Place places[13][13];
 	Directions dirs = RIGHT;
+	pair<int, int> snakePos;
 
 public:
-	Game(sf::RenderWindow& w);
+	Game(sf::RenderWindow* w);
 	~Game() {};
 
 	void Run();
 	void DrawPlaces();
+	void Snake();
 };
 
