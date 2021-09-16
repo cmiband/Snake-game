@@ -6,6 +6,7 @@ class Place
 private:
 	sf::RectangleShape shp = sf::RectangleShape(sf::Vector2f(20.0f, 20.0f));
 	bool isPartOfSnake = false;
+	bool isPickableFruit = false;
 
 public:
 	Place() {
@@ -31,12 +32,20 @@ public:
 	}
 
 	void ChangeColor() {
-		if (isPartOfSnake) {
+		if (isPartOfSnake || isPickableFruit) {
 			shp.setFillColor(sf::Color::Red);
 		}
 		else {
 			shp.setFillColor(sf::Color::Green);
 		}
+	}
+
+	bool GetFruitCover() {
+		return isPickableFruit;
+	}
+
+	void SetFruitCover(bool val) {
+		isPickableFruit = val;
 	}
 };
 

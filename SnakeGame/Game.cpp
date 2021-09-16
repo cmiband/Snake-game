@@ -1,6 +1,6 @@
 #include "Game.h"
 
-Game::Game(sf::RenderWindow* w) : window(w) {
+Game::Game(sf::RenderWindow* w, sf::Font f) : window(w), font(f) {
 	for (int i = 0; i < 13; i++) {
 		for (int j = 0; j < 13; j++) {
 			Place p(sf::Vector2f(j * 20.0f, i * 20.0f));
@@ -39,11 +39,57 @@ void Game::Snake() {
 	}
 }
 
+void Game::LoseConditions() {
+	if (snakePos.first <= 0) {
+		if (dirs == Game::TOP) {
+			gameRunning = false;
+		}
+	}
+	if (snakePos.first >= 12) {
+		if (dirs == Game::DOWN) {
+			gameRunning = false;
+		}
+	}
+	if (snakePos.second >= 12) {
+		if (dirs == Game::RIGHT) {
+			gameRunning = false;
+		}
+	}
+	if (snakePos.second <= 0) {
+		if (dirs == Game::LEFT) {
+			gameRunning = false;
+		}
+	}
+}
+
+void Game::SpawnFruit() {
+	if (FruitAvailableToSpawn) {
+		int randx = rand() % 12;
+		int randy = rand() % 12;
+		if ((randx == snakePos.second) && (randy == snakePos.first)) {
+			SpawnFruit();
+		}
+		else {
+			places[randy][randx].SetFruitCover(true);
+			fruitPos.first = randy;
+			fruitPos.second = randx;
+		}
+		FruitAvailableToSpawn = false;
+	}
+}
+
+void Game::CollectFruit() {
+	if ((fruitPos.first == snakePos.first) && (fruitPos.second == snakePos.second)) {
+		snakeLenght++;
+	}
+}
+
 void Game::Run() {
 	snakePos.first = 4;
 	snakePos.second = 4;
+	snakeHeadPositions.push_back(make_pair(4,4));
 	sf::Clock clock;
-
+	
 	while (window->isOpen()) {
 		sf::Event e;
 
@@ -65,19 +111,25 @@ void Game::Run() {
 			}
 
 			sf::Time elapsedRaw = clock.getElapsedTime();
-			int elapsed = elapsedRaw.asMilliseconds();
+			int elapsed = (int)elapsedRaw.asSeconds();
 
 			window->clear();
 			
-			printf("%d\n", elapsed);
-			if (elapsed >= 300) {
-				Snake();
-				places[snakePos.first][snakePos.second].SetSnakeCover(true);
-				places[snakePos.first][snakePos.second].ChangeColor();
-				clock.restart();
-			}
-
 			DrawPlaces();
+			if (gameRunning) {
+				printf("%d\n", elapsed);
+				if (elapsed >= 1) {
+					LoseConditions();
+					Snake();
+					places[snakePos.first][snakePos.second].SetSnakeCover(true);
+					places[snakePos.first][snakePos.second].ChangeColor();
+					snakeHeadPositions.push_back(make_pair(snakePos.first, snakePos.second));
+					clock.restart();
+				}
+			}
+			else {
+				window->draw(gameOver);
+			}
 
 			window->display();
 		}
