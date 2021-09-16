@@ -25,7 +25,7 @@ private:
 	pair<int, int> snakePos;
 	pair<int, int> fruitPos;
 	vector<pair<int, int>> snakeHeadPositions;
-	int snakeLenght;
+	int snakeLenght = 1;
 	bool FruitAvailableToSpawn = true;
 
 	sf::Font font;

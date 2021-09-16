@@ -66,11 +66,10 @@ void Game::SpawnFruit() {
 	if (FruitAvailableToSpawn) {
 		int randx = rand() % 12;
 		int randy = rand() % 12;
-		if ((randx == snakePos.second) && (randy == snakePos.first)) {
-			SpawnFruit();
-		}
-		else {
+		printf("%d %d\n", randy, randx);
+		if ((randx != snakePos.second) && (randy != snakePos.first)) {
 			places[randy][randx].SetFruitCover(true);
+			places[randy][randx].ChangeColor();
 			fruitPos.first = randy;
 			fruitPos.second = randx;
 		}
@@ -80,7 +79,10 @@ void Game::SpawnFruit() {
 
 void Game::CollectFruit() {
 	if ((fruitPos.first == snakePos.first) && (fruitPos.second == snakePos.second)) {
+		places[fruitPos.first][fruitPos.second].SetFruitCover(false);
+		places[fruitPos.first][fruitPos.second].ChangeColor();
 		snakeLenght++;
+		FruitAvailableToSpawn = true;
 	}
 }
 
@@ -116,11 +118,12 @@ void Game::Run() {
 			window->clear();
 			
 			DrawPlaces();
+			SpawnFruit();
 			if (gameRunning) {
-				printf("%d\n", elapsed);
 				if (elapsed >= 1) {
 					LoseConditions();
 					Snake();
+					CollectFruit();
 					places[snakePos.first][snakePos.second].SetSnakeCover(true);
 					places[snakePos.first][snakePos.second].ChangeColor();
 					snakeHeadPositions.push_back(make_pair(snakePos.first, snakePos.second));
