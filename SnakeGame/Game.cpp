@@ -18,8 +18,19 @@ void Game::DrawPlaces() {
 }
 
 void Game::Snake() {
-	places[snakePos.first][snakePos.second].SetSnakeCover(false);
-	places[snakePos.first][snakePos.second].ChangeColor();
+	if (snakeLenght > 1) {
+		int l = (int)snakeHeadPositions.size();
+		places[snakePos.first][snakePos.second].SetSnakeCover(true);
+		places[snakePos.first][snakePos.second].ChangeColor();
+		for (int i = 1; i < snakeLenght; i++) {
+			places[snakeHeadPositions[l - i].first][snakeHeadPositions[l - i].second].SetSnakeCover(true);
+			places[snakeHeadPositions[l - i].first][snakeHeadPositions[l - i].second].ChangeColor();
+		}
+	}
+	if (snakeLenght <= 1) {
+		places[snakePos.first][snakePos.second].SetSnakeCover(true);
+		places[snakePos.first][snakePos.second].ChangeColor();
+	}
 	switch (dirs)
 	{
 	case Game::LEFT:
@@ -66,12 +77,11 @@ void Game::SpawnFruit() {
 	if (FruitAvailableToSpawn) {
 		int randx = rand() % 12;
 		int randy = rand() % 12;
-		printf("%d %d\n", randy, randx);
 		if ((randx != snakePos.second) && (randy != snakePos.first)) {
-			places[randy][randx].SetFruitCover(true);
-			places[randy][randx].ChangeColor();
-			fruitPos.first = randy;
-			fruitPos.second = randx;
+			places[randx][randy].SetFruitCover(true);
+			places[randx][randy].ChangeColor();
+			fruitPos.first = randx;
+			fruitPos.second = randy;
 		}
 		FruitAvailableToSpawn = false;
 	}
@@ -89,8 +99,9 @@ void Game::CollectFruit() {
 void Game::Run() {
 	snakePos.first = 4;
 	snakePos.second = 4;
-	snakeHeadPositions.push_back(make_pair(4,4));
+	snakeHeadPositions.push_back(make_pair(snakePos.first,snakePos.second));
 	sf::Clock clock;
+	float elapsed;
 	
 	while (window->isOpen()) {
 		sf::Event e;
@@ -112,15 +123,14 @@ void Game::Run() {
 				dirs = Game::RIGHT;
 			}
 
-			sf::Time elapsedRaw = clock.getElapsedTime();
-			int elapsed = (int)elapsedRaw.asSeconds();
+			elapsed = clock.getElapsedTime().asSeconds();
 
 			window->clear();
 			
 			DrawPlaces();
 			SpawnFruit();
 			if (gameRunning) {
-				if (elapsed >= 1) {
+				if (elapsed >= 0.7f) {
 					LoseConditions();
 					Snake();
 					CollectFruit();
