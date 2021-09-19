@@ -5,7 +5,6 @@ int main() {
 	const int screenWidth = 260;
 	const int screenHeight = 260;
 	sf::RenderWindow w(sf::VideoMode(screenWidth, screenHeight), "Snake");
-	w.setFramerateLimit(30);
 
 	sf::Font f;
 	if (!f.loadFromFile("BebasNeue-Regular.ttf")) {

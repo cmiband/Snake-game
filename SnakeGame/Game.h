@@ -30,16 +30,21 @@ private:
 
 	sf::Font font;
 	sf::Text gameOver = sf::Text("Game over!", font, 30);
+	sf::Text restartGame = sf::Text("Press R to restart!", font, 20);
+	sf::RectangleShape restartButton = sf::RectangleShape(sf::Vector2f(145.0f, 25.0f));
+
+	void DrawPlaces();
+	void Snake();
+	void SpawnFruit();
+	void ClearTable();
+	void CollectFruit();
+	void LoseConditions();
 
 public:
 	Game(sf::RenderWindow* w, sf::Font f);
 	~Game() {};
 
-	void CollectFruit();
-	void LoseConditions();
 	void Run();
-	void DrawPlaces();
-	void Snake();
-	void SpawnFruit();
+
 };
 

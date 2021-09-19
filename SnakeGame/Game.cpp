@@ -7,6 +7,10 @@ Game::Game(sf::RenderWindow* w, sf::Font f) : window(w), font(f) {
 			places[i][j] = p;
 		}
 	}
+
+	restartButton.setFillColor(sf::Color::Cyan);
+	restartButton.setPosition(sf::Vector2f(0.0f, 35.0f));
+	restartGame.setPosition(sf::Vector2f(5.0f, 35.0f));
 }
 
 void Game::DrawPlaces() {
@@ -76,6 +80,31 @@ void Game::LoseConditions() {
 			gameRunning = false;
 		}
 	}
+	if (snakeLenght > 1)
+	{
+		switch (dirs) {
+		case Game::RIGHT:
+			if (places[snakePos.first][snakePos.second + 1].GetSnakeCover()) {
+				gameRunning = false;
+			}
+			break;
+		case Game::LEFT:
+			if (places[snakePos.first][snakePos.second - 1].GetSnakeCover()) {
+				gameRunning = false;
+			}
+			break;
+		case Game::TOP:
+			if (places[snakePos.first - 1][snakePos.second].GetSnakeCover()) {
+				gameRunning = false;
+			}
+			break;
+		case Game::DOWN:
+			if (places[snakePos.first + 1][snakePos.second].GetSnakeCover()) {
+				gameRunning = false;
+			}
+			break;
+		}
+	}
 }
 
 void Game::SpawnFruit() {
@@ -101,13 +130,22 @@ void Game::CollectFruit() {
 	}
 }
 
+void Game::ClearTable() {
+	for (int i = 0; i < 13; i++) {
+		for (int j = 0; j < 13; j++) {
+			places[i][j].SetSnakeCover(false);
+			places[i][j].ChangeColor();
+		}
+	}
+}
+
 void Game::Run() {
 	snakePos.first = 4;
 	snakePos.second = 4;
 	snakeHeadPositions.push_back(make_pair(snakePos.first,snakePos.second));
 	sf::Clock clock;
 	float elapsed;
-	
+
 	while (window->isOpen()) {
 		sf::Event e;
 
@@ -145,6 +183,18 @@ void Game::Run() {
 			}
 			else {
 				window->draw(gameOver);
+				window->draw(restartButton);
+				window->draw(restartGame);
+
+				if (sf::Keyboard::isKeyPressed(sf::Keyboard::R)) {
+					ClearTable();
+					snakePos.first = 4;
+					snakePos.second = 4;
+					snakeLenght = 1;
+					snakeHeadPositions.clear();
+					snakeHeadPositions.push_back(make_pair(snakePos.first, snakePos.second));
+					gameRunning = true;
+				}
 			}
 
 			window->display();
