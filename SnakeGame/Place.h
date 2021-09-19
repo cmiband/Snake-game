@@ -7,6 +7,7 @@ private:
 	sf::RectangleShape shp = sf::RectangleShape(sf::Vector2f(20.0f, 20.0f));
 	bool isPartOfSnake = false;
 	bool isPickableFruit = false;
+	bool canSpawn = true;
 
 public:
 	Place() {
@@ -46,6 +47,14 @@ public:
 
 	void SetFruitCover(bool val) {
 		isPickableFruit = val;
+	}
+
+	bool GetSpawn() {
+		return canSpawn;
+	}
+
+	void SetSpawn(bool val) {
+		canSpawn = val;
 	}
 };
 

@@ -12,24 +12,27 @@ Game::Game(sf::RenderWindow* w, sf::Font f) : window(w), font(f) {
 void Game::DrawPlaces() {
 	for (int i = 0; i < 13; i++) {
 		for (int j = 0; j < 13; j++) {
+			if (places[i][j].GetSnakeCover()) {
+				places[i][j].SetSpawn(false);
+			}
+			if (!places[i][j].GetSnakeCover()) {
+				places[i][j].SetSpawn(true);
+			}
 			window->draw(places[i][j].getShape());
 		}
 	}
 }
 
 void Game::Snake() {
-	if (snakeLenght > 1) {
-		int l = (int)snakeHeadPositions.size();
-		places[snakePos.first][snakePos.second].SetSnakeCover(true);
+	printf("%d\n", snakeLenght);
+	if (snakeLenght == 1) {
+		places[snakePos.first][snakePos.second].SetSnakeCover(false);
 		places[snakePos.first][snakePos.second].ChangeColor();
-		for (int i = 1; i < snakeLenght; i++) {
-			places[snakeHeadPositions[l - i].first][snakeHeadPositions[l - i].second].SetSnakeCover(true);
-			places[snakeHeadPositions[l - i].first][snakeHeadPositions[l - i].second].ChangeColor();
-		}
 	}
-	if (snakeLenght <= 1) {
-		places[snakePos.first][snakePos.second].SetSnakeCover(true);
-		places[snakePos.first][snakePos.second].ChangeColor();
+	if (snakeLenght > 1) {
+		int s = (int)(snakeHeadPositions.size() - 1 - snakeLenght);
+		places[snakeHeadPositions[s].first][snakeHeadPositions[s].second].SetSnakeCover(false);
+		places[snakeHeadPositions[s].first][snakeHeadPositions[s].second].ChangeColor();
 	}
 	switch (dirs)
 	{
@@ -48,25 +51,27 @@ void Game::Snake() {
 	default:
 		break;
 	}
+	places[snakePos.first][snakePos.second].SetSnakeCover(true);
+	places[snakePos.first][snakePos.second].ChangeColor();
 }
 
 void Game::LoseConditions() {
-	if (snakePos.first <= 0) {
+	if (snakePos.first <= 1) {
 		if (dirs == Game::TOP) {
 			gameRunning = false;
 		}
 	}
-	if (snakePos.first >= 12) {
+	if (snakePos.first == 12) {
 		if (dirs == Game::DOWN) {
 			gameRunning = false;
 		}
 	}
-	if (snakePos.second >= 12) {
+	if (snakePos.second == 12) {
 		if (dirs == Game::RIGHT) {
 			gameRunning = false;
 		}
 	}
-	if (snakePos.second <= 0) {
+	if (snakePos.second == 0) {
 		if (dirs == Game::LEFT) {
 			gameRunning = false;
 		}
@@ -76,12 +81,12 @@ void Game::LoseConditions() {
 void Game::SpawnFruit() {
 	if (FruitAvailableToSpawn) {
 		int randx = rand() % 12;
-		int randy = rand() % 12;
-		if ((randx != snakePos.second) && (randy != snakePos.first)) {
-			places[randx][randy].SetFruitCover(true);
-			places[randx][randy].ChangeColor();
-			fruitPos.first = randx;
-			fruitPos.second = randy;
+		int randy = rand() % 12 + 1;
+		if (!places[randy][randx].GetSnakeCover()) {
+			places[randy][randx].SetFruitCover(true);
+			places[randy][randx].ChangeColor();
+			fruitPos.first = randy;
+			fruitPos.second = randx;
 		}
 		FruitAvailableToSpawn = false;
 	}
@@ -134,8 +139,6 @@ void Game::Run() {
 					LoseConditions();
 					Snake();
 					CollectFruit();
-					places[snakePos.first][snakePos.second].SetSnakeCover(true);
-					places[snakePos.first][snakePos.second].ChangeColor();
 					snakeHeadPositions.push_back(make_pair(snakePos.first, snakePos.second));
 					clock.restart();
 				}
